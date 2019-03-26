@@ -24,7 +24,7 @@
     "actually-prepublish": "echo \"\\n\\nPlease run \\`bin/publish.sh <options>\\` instead.\\n\\n\" && exit 2",
     "test": "yarn run clean && yarn run test:flow && yarn run test:jest && yarn run check",
     "test:flow": "flow check",
-    "test:jest": "jest --coverage",
+    "test:jest": "jest --passWithNoTests --coverage",
     "watch": "jest --watch"
   },
   "repository": {
