@@ -1,5 +1,4 @@
 // @flow strict
-/* eslint-disable complexity */
 
 import {
     GraphQLEnumType,

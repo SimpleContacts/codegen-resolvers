@@ -1,12 +1,14 @@
 // @flow strict
+/* eslint-disable no-console */
 
-import { sortBy } from 'lodash';
-import chalk from 'chalk';
 import fs from 'fs';
-import mkdirp from 'mkdirp-promise';
 import path from 'path';
-import prettier from 'prettier';
 import util from 'util';
+
+import chalk from 'chalk';
+import { sortBy } from 'lodash';
+import mkdirp from 'mkdirp-promise';
+import prettier from 'prettier';
 
 const readFile = util.promisify(fs.readFile);
 const writeFile = util.promisify(fs.writeFile);

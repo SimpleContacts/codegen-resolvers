@@ -20,9 +20,10 @@
 
 // $FlowFixMe - parse() is missing type defs!
 import { parse } from '@babel/parser';
-import { read } from './io';
 // $FlowFixMe - traverse() is missing type defs!
 import traverse from '@babel/traverse';
+
+import { read } from './io';
 
 const BABEL_PARSER_OPTIONS = { sourceType: 'module', plugins: ['flow'] };
 

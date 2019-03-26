@@ -1,5 +1,10 @@
 // @flow
+/* eslint-disable no-console */
 
+import fs from 'fs';
+import path from 'path';
+
+import commander from 'commander';
 import {
     GraphQLInputObjectType,
     GraphQLInterfaceType,
@@ -9,17 +14,15 @@ import {
     GraphQLUnionType,
     buildSchema,
 } from 'graphql';
-import { checkOutputDir, read, writeCode } from './lib/io';
+import type { GraphQLArgument, GraphQLField, GraphQLInputType, GraphQLOutputType } from 'graphql';
+import invariant from 'invariant';
+import { sortBy } from 'lodash';
+
 import { getExportsFromPath } from './lib/ast-helpers';
 import { idispatch, odispatch } from './lib/graphql-dispatch';
-import { lowerCaseFirst } from './lib/strings';
-import { sortBy } from 'lodash';
+import { checkOutputDir, read, writeCode } from './lib/io';
 import ModuleBuilder from './lib/ModuleBuilder';
-import commander from 'commander';
-import fs from 'fs';
-import invariant from 'invariant';
-import path from 'path';
-import type { GraphQLArgument, GraphQLField, GraphQLInputType, GraphQLOutputType } from 'graphql';
+import { lowerCaseFirst } from './lib/strings';
 
 type ProgramOptions = {|
     schemaFile: string,

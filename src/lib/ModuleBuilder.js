@@ -238,8 +238,8 @@ export default class ModuleBuilder {
             [...this.iterImports()],
             [
                 // Sort by priority then by name
-                ([priority, m]) => priority,
-                ([priority, m]) => m.toLowerCase(),
+                ([priority]) => priority,
+                ([, m]) => m.toLowerCase(),
             ]
         ).map(([, , line]) => line);
         const typeDefLines = this._typeDefCode.map(code => `${code}\n`);
