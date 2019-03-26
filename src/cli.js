@@ -431,6 +431,8 @@ async function writeModelsScaffold(schema: GraphQLSchema, outputFile: string): P
 async function writeInterfaceImpls(schema: GraphQLSchema, outputDir: string): Promise<boolean> {
     const interfaces = namedTypesFromSchema(schema).filter(name => isUnionOrInterfaceType(name, schema));
 
+    if (interfaces.length < 1) return true;
+
     const files = await Promise.all(
         interfaces.map(async name => {
             const basename = `${name}.js`;
@@ -516,6 +518,8 @@ async function writeScalarImpls(schema: GraphQLSchema, outputDir: string): Promi
     const scalarNames = namedTypesFromSchema(schema).filter(
         model => schema.getType(model) instanceof GraphQLScalarType
     );
+
+    if (scalarNames.length < 1) return;
 
     const $files = [
         // The index.js file
