@@ -67,6 +67,7 @@
     "rimraf": "^2.6.2"
   },
   "dependencies": {
+    "@babel/runtime": "^7.4.2",
     "commander": "^2.19.0",
     "graphql": "^14.2.0",
     "lodash": "^4.17.11",
