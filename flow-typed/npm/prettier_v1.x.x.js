@@ -7,7 +7,8 @@ declare module "prettier" {
   declare export type FastPath = Object;
 
   declare export type PrettierParserName =
-    | "babylon"
+    | "babel"
+    | "babylon"  // NOTE: Will be deprecated in favor of "babel" in the future
     | "flow"
     | "typescript"
     | "postcss"
