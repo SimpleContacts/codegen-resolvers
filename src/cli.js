@@ -60,13 +60,8 @@ const HEADER_COMMENT = `
  *
  * It's doable, but uglier than it needs to be.
  */
-function nonOptional(baseTypeExpr: string): string {
-    if (!baseTypeExpr.endsWith(' | null')) {
-        throw new Error(`Expected type to end with " | null", but got: "${baseTypeExpr}"`);
-    }
-
-    // Strip off the " | null" suffix
-    return baseTypeExpr.substring(0, baseTypeExpr.length - 7);
+function nonOptional(expr: string): string {
+    return expr.replace(/(\s*[|]\s*(null|void))*$/, '');
 }
 
 const ROOT_TYPES = new Set(['Query', 'Mutation']);
@@ -155,7 +150,15 @@ function toResolverTypeDefinition(value: GraphQLOutputType): string {
 }
 
 // NOTE: This is a bit of a hack. Find a better way.
-const FLOW_SCALARS = {
+const FLOW_INPUT_SCALARS = {
+    ID: 'string | number | null | void',
+    String: 'string | null | void',
+    Int: 'number | null | void',
+    Float: 'number | null | void',
+    Boolean: 'boolean | null | void',
+};
+
+const FLOW_OUTPUT_SCALARS = {
     ID: 'string | number | null',
     String: 'string | null',
     Int: 'number | null',
@@ -170,7 +173,7 @@ const FLOW_SCALARS = {
 // TODO: DO NOT EXPORT THIS HERE, BUT MAKE IT A SHARED LIBRARY!
 export function toFlowOutputTypeRef(value: GraphQLOutputType): string {
     return odispatch(value, {
-        onScalar: node => FLOW_SCALARS[node.name] || `${node.name} | null`,
+        onScalar: node => FLOW_OUTPUT_SCALARS[node.name] || `${node.name} | null`,
 
         onNonNull: node => {
             const baseType = toFlowOutputTypeRef(node.ofType);
@@ -219,7 +222,7 @@ function toFlowInputTypeDefinition(value: GraphQLInputType): string {
  */
 function toFlowInputTypeRef(value: GraphQLInputType): string {
     return idispatch(value, {
-        onScalar: node => FLOW_SCALARS[node.name] || `${node.name} | null`,
+        onScalar: node => FLOW_INPUT_SCALARS[node.name] || `${node.name} | null | void`,
 
         onNonNull: node => {
             const baseType = toFlowInputTypeRef(node.ofType);
