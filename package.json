@@ -1,6 +1,6 @@
 {
   "name": "codegen-resolvers",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Generate type-safe resolvers from your GraphQL schema definition.",
   "githubUrl": "https://github.com/SimpleContacts/codegen-resolvers",
   "main": "./dist/index.js",
