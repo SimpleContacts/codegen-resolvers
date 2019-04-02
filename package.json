@@ -52,7 +52,7 @@
     "@babel/preset-flow": "^7.0.0",
     "babel-eslint": "^10.0.1",
     "coveralls": "^3.0.2",
-    "eslint": "^5.1.0",
+    "eslint": "^5.16.0",
     "eslint-plugin-flowtype": "^3.0.0",
     "flow-bin": "^0.96.0",
     "flow-copy-source": "^2.0.1",
@@ -62,8 +62,8 @@
     "import-sort-style-eslint": "^6.0.0",
     "import-sort-style-module": "^6.0.0",
     "in-publish": "^2.0.0",
-    "jest": "^24.1.0",
-    "jest-cli": "^24.1.0",
+    "jest": "^24.6.0",
+    "jest-cli": "^24.6.0",
     "rimraf": "^2.6.2"
   },
   "dependencies": {
@@ -71,7 +71,7 @@
     "@babel/runtime": "^7.4.2",
     "@babel/traverse": "^7.4.0",
     "commander": "^2.19.0",
-    "graphql": "^14.2.0",
+    "graphql": "^14.2.1",
     "invariant": "^2.2.4",
     "lodash": "^4.17.11",
     "mkdirp-promise": "^5.0.1",
