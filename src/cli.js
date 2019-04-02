@@ -105,7 +105,7 @@ function toResolverTypeDefinition(value: GraphQLOutputType): string {
             // inherited field here now.  Nicely group these by interface in sections
             // with a leading comment.
             const sections = [];
-            for (const iface of node.getInterfaces()) {
+            for (const iface of getInterfaces(node)) {
                 const lines = [];
                 lines.push('');
                 lines.push(`// From ${iface.name}`);
@@ -262,6 +262,20 @@ function isUnionOrInterfaceType(typename: string, schema: GraphQLSchema): boolea
     return type instanceof GraphQLInterfaceType || type instanceof GraphQLUnionType;
 }
 
+function getInterfaces(node: GraphQLObjectType): Array<GraphQLInterfaceType> {
+    const ifaces = [];
+    for (const iface of node.getInterfaces()) {
+        // Error early if we're trying to implement an object type (this will
+        // not work at runtime)
+        invariant(
+            !(iface instanceof GraphQLObjectType),
+            `Type ${node.name} must only implement interface types, it cannot implement ${iface.name}.`
+        );
+        ifaces.push(iface);
+    }
+    return ifaces;
+}
+
 /**
  * Writes Resolver Flow types to ./types/*.js
  */
@@ -366,7 +380,7 @@ async function writeResolverImpl(schema: GraphQLSchema, modelName: string, outpu
     // inherited field here now.  Nicely group these by interface in sections
     // with a leading comment.
     const sections = [];
-    for (const iface of objType.getInterfaces()) {
+    for (const iface of getInterfaces(objType)) {
         const lines = [];
         lines.push('');
         lines.push(`// From ${iface.name}`);
@@ -458,7 +472,7 @@ function getConcreteSubtypes(schema: GraphQLSchema, name: string): Array<string>
               namedTypesFromSchema(schema).filter(typename => {
                   const t = schema.getType(typename);
                   // Only keep object types that implement the current interface
-                  return t instanceof GraphQLObjectType && t.getInterfaces().some(iface => iface.name === name);
+                  return t instanceof GraphQLObjectType && getInterfaces(t).some(iface => iface.name === name);
               });
     return concretes;
 }
