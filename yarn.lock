@@ -612,9 +612,9 @@
     "@babel/plugin-transform-flow-strip-types" "^7.0.0"
 
 "@babel/runtime@^7.4.2":
-  version "7.4.2"
-  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.4.2.tgz#f5ab6897320f16decd855eed70b705908a313fe8"
-  integrity sha512-7Bl2rALb7HpvXFL7TETNzKSAeBVCPHELzc0C//9FCxN8nsiueWSJBqaF+2oIJScyILStASR/Cx5WMkXGYTiJFA==
+  version "7.5.2"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.5.2.tgz#98f584f4d03be5d8142c77107ffaedee4d5956f1"
+  integrity sha512-9M29wrrP7//JBGX70+IrDuD1w4iOYhUGpJNMQJVNAXue+cFeFlMTqBECouIziXPUphlgrfjcfiEpGX4t0WGK4g==
   dependencies:
     regenerator-runtime "^0.13.2"
 
