@@ -62,7 +62,7 @@
     "import-sort-style-eslint": "^6.0.0",
     "import-sort-style-module": "^6.0.0",
     "in-publish": "^2.0.0",
-    "jest": "^24.6.0",
+    "jest": "^25.2.3",
     "jest-cli": "^24.6.0",
     "rimraf": "^2.6.2"
   },
