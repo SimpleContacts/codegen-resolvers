@@ -63,7 +63,7 @@
     "import-sort-style-module": "^6.0.0",
     "in-publish": "^2.0.0",
     "jest": "^24.6.0",
-    "jest-cli": "^24.6.0",
+    "jest-cli": "^26.0.1",
     "rimraf": "^2.6.2"
   },
   "dependencies": {
