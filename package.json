@@ -75,7 +75,7 @@
     "invariant": "^2.2.4",
     "lodash": "^4.17.11",
     "mkdirp-promise": "^5.0.1",
-    "prettier": "^1.16.4"
+    "prettier": "^2.0.5"
   },
   "jest": {
     "testPathIgnorePatterns": [
