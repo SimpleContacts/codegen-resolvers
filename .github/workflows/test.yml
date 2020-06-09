@@ -22,5 +22,17 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
-      - name: Run tests
-        run: yarn test
+      - name: Flow
+        run: yarn run -s flow check
+
+      - name: Jest
+        run: yarn run -s jest --passWithNoTests --coverage
+
+      - name: Eslint
+        run: yarn run -s eslint --report-unused-disable-directives src
+
+      - name: Import-sort
+        run: yarn run -s import-sort --list-different 'src/**/*.js'
+
+      - name: Prettier
+        run: yarn run -s prettier --check 'src/**/*.js'
