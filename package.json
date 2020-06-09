@@ -64,7 +64,7 @@
     "in-publish": "^2.0.0",
     "jest": "^26.0.1",
     "jest-cli": "^26.0.1",
-    "rimraf": "^2.6.2"
+    "rimraf": "^3.0.2"
   },
   "dependencies": {
     "@babel/parser": "^7.10.2",
