@@ -98,7 +98,7 @@ function toResolverTypeDefinition(value: GraphQLOutputType): string {
         onInterface: () => '', // Skip
         onUnion: () => '', // Skip
 
-        onObject: node => {
+        onObject: (node) => {
             const seen = new Set();
 
             // If this type implements any interfaces, emit a field for each
@@ -124,8 +124,8 @@ function toResolverTypeDefinition(value: GraphQLOutputType): string {
                 `export type ${node.name}Resolver = {|`,
                 ...sections,
                 ...Object.keys(fields)
-                    .filter(name => !seen.has(name))
-                    .map(name => {
+                    .filter((name) => !seen.has(name))
+                    .map((name) => {
                         const field = fields[name];
                         return toFieldTypeDefinition(node, field);
                     }),
@@ -133,17 +133,17 @@ function toResolverTypeDefinition(value: GraphQLOutputType): string {
             ].join('\n');
         },
 
-        onEnum: node => {
+        onEnum: (node) => {
             const def = node
                 .getValues()
-                .map(entry => {
+                .map((entry) => {
                     return `| ${JSON.stringify(entry.value)}\n`;
                 })
                 .join('\n');
             return `export type ${node.name} = \n${def}`;
         },
 
-        default: node => {
+        default: (node) => {
             throw new Error(`Not implemented: ${String(node)}`);
         },
     });
@@ -173,16 +173,16 @@ const FLOW_OUTPUT_SCALARS = {
 // TODO: DO NOT EXPORT THIS HERE, BUT MAKE IT A SHARED LIBRARY!
 export function toFlowOutputTypeRef(value: GraphQLOutputType): string {
     return odispatch(value, {
-        onScalar: node => FLOW_OUTPUT_SCALARS[node.name] || `${node.name} | null`,
+        onScalar: (node) => FLOW_OUTPUT_SCALARS[node.name] || `${node.name} | null`,
 
-        onNonNull: node => {
+        onNonNull: (node) => {
             const baseType = toFlowOutputTypeRef(node.ofType);
             return nonOptional(baseType);
         },
 
-        onList: node => `Array<${toFlowOutputTypeRef(node.ofType)}> | null`,
+        onList: (node) => `Array<${toFlowOutputTypeRef(node.ofType)}> | null`,
 
-        default: node => {
+        default: (node) => {
             const name = node.name || '';
             if (!name) {
                 throw new Error(`Missing type name: ${String(node)}`);
@@ -198,11 +198,11 @@ export function toFlowOutputTypeRef(value: GraphQLOutputType): string {
  */
 function toFlowInputTypeDefinition(value: GraphQLInputType): string {
     return idispatch(value, {
-        onObject: node => {
+        onObject: (node) => {
             const fields = node.getFields();
             return [
                 '{|',
-                ...Object.keys(fields).map(fieldName => {
+                ...Object.keys(fields).map((fieldName) => {
                     const field = fields[fieldName];
                     return `+${fieldName}: ${toFlowInputTypeRef(field.type)},`;
                 }),
@@ -210,7 +210,7 @@ function toFlowInputTypeDefinition(value: GraphQLInputType): string {
             ].join('\n');
         },
 
-        default: node => {
+        default: (node) => {
             throw new Error(`Missing type name: ${String(node)}`);
         },
     });
@@ -222,16 +222,16 @@ function toFlowInputTypeDefinition(value: GraphQLInputType): string {
  */
 function toFlowInputTypeRef(value: GraphQLInputType): string {
     return idispatch(value, {
-        onScalar: node => FLOW_INPUT_SCALARS[node.name] || `${node.name} | null | void`,
+        onScalar: (node) => FLOW_INPUT_SCALARS[node.name] || `${node.name} | null | void`,
 
-        onNonNull: node => {
+        onNonNull: (node) => {
             const baseType = toFlowInputTypeRef(node.ofType);
             return nonOptional(baseType);
         },
 
-        onList: node => `Array<${toFlowInputTypeRef(node.ofType)}> | null`,
+        onList: (node) => `Array<${toFlowInputTypeRef(node.ofType)}> | null`,
 
-        default: node => {
+        default: (node) => {
             const name = node.name || '';
             if (!name) {
                 throw new Error(`Missing type name: ${String(node)}`);
@@ -242,7 +242,7 @@ function toFlowInputTypeRef(value: GraphQLInputType): string {
 }
 
 function toFlowArgType(args: Array<GraphQLArgument>): string {
-    const fieldExprs = args.map(arg => `+${arg.name}: ${toFlowInputTypeRef(arg.type)}`).join(', ');
+    const fieldExprs = args.map((arg) => `+${arg.name}: ${toFlowInputTypeRef(arg.type)}`).join(', ');
     return `{| ${fieldExprs} |}`;
 }
 
@@ -252,8 +252,8 @@ function toFlowArgType(args: Array<GraphQLArgument>): string {
  */
 function namedTypesFromSchema(schema: GraphQLSchema): Array<string> {
     const typeNames = Object.keys(schema.getTypeMap())
-        .filter(name => !name.startsWith('__'))
-        .filter(name => !BUILTINS.has(name));
+        .filter((name) => !name.startsWith('__'))
+        .filter((name) => !BUILTINS.has(name));
     return sortBy(typeNames);
 }
 
@@ -284,7 +284,7 @@ async function writeResolverTypes(schema: GraphQLSchema, outputFile: string): Pr
     const typeNames = namedTypesFromSchema(schema);
 
     const inputTypeDefs = typeNames
-        .map(name => {
+        .map((name) => {
             const node = typeDefs[name];
             if (!(node instanceof GraphQLInputObjectType)) {
                 // Skip
@@ -296,8 +296,8 @@ async function writeResolverTypes(schema: GraphQLSchema, outputFile: string): Pr
         .filter(Boolean);
 
     const resolverDefs = typeNames
-        .filter(name => !(typeDefs[name] instanceof GraphQLUnionType))
-        .map(name => {
+        .filter((name) => !(typeDefs[name] instanceof GraphQLUnionType))
+        .map((name) => {
             const node = typeDefs[name];
             if (node instanceof GraphQLInputObjectType) {
                 // Skip these: they don't need a resolver
@@ -308,20 +308,20 @@ async function writeResolverTypes(schema: GraphQLSchema, outputFile: string): Pr
         .filter(Boolean);
 
     const scalarTypeNames = typeNames
-        .filter(name => !BUILTINS.has(name))
-        .filter(name => typeDefs[name] instanceof GraphQLScalarType);
+        .filter((name) => !BUILTINS.has(name))
+        .filter((name) => typeDefs[name] instanceof GraphQLScalarType);
 
     const modelNames = typeNames
-        .filter(name => !ROOT_TYPES.has(name))
-        .filter(name => typeDefs[name] instanceof GraphQLObjectType);
+        .filter((name) => !ROOT_TYPES.has(name))
+        .filter((name) => typeDefs[name] instanceof GraphQLObjectType);
 
     const interfaceDefs = typeNames
-        .filter(name => isUnionOrInterfaceType(name, schema))
-        .map(name => {
+        .filter((name) => isUnionOrInterfaceType(name, schema))
+        .map((name) => {
             const concretes = getConcreteSubtypes(schema, name);
             return `
                 export type ${name} = ${concretes.join(' | ')};
-                export type ${name}$typename = ${concretes.map(n => JSON.stringify(n)).join(' | ')};
+                export type ${name}$typename = ${concretes.map((n) => JSON.stringify(n)).join(' | ')};
             `;
         });
 
@@ -396,11 +396,11 @@ async function writeResolverImpl(schema: GraphQLSchema, modelName: string, outpu
     const fields = objType.getFields();
     const impl = [
         '{',
-        ...sections.map(section => section.join('\n')),
+        ...sections.map((section) => section.join('\n')),
         '',
         ...Object.keys(fields)
-            .filter(name => !seen.has(name))
-            .map(fieldName =>
+            .filter((name) => !seen.has(name))
+            .map((fieldName) =>
                 ROOT_TYPES.has(modelName)
                     ? `${fieldName}: (_, args, context) => {
                           // TODO: Replace this with your desired implementation
@@ -424,21 +424,21 @@ async function writeResolverImpl(schema: GraphQLSchema, modelName: string, outpu
  */
 async function writeModelsScaffold(schema: GraphQLSchema, outputFile: string): Promise<void> {
     const modelNames = namedTypesFromSchema(schema)
-        .filter(name => schema.getType(name) instanceof GraphQLObjectType)
-        .filter(name => !ROOT_TYPES.has(name));
+        .filter((name) => schema.getType(name) instanceof GraphQLObjectType)
+        .filter((name) => !ROOT_TYPES.has(name));
 
     const exists = fs.existsSync(outputFile);
     const origCode = !exists ? '// @flow\n\n' : await read(outputFile);
 
     const exportedTypes = exists ? new Set(await getExportsFromPath(outputFile)) : new Set();
-    const missingModelNames = modelNames.filter(name => !exportedTypes.has(name));
+    const missingModelNames = modelNames.filter((name) => !exportedTypes.has(name));
 
     if (missingModelNames.length > 0) {
         const code = `
             ${origCode}
 
             ${missingModelNames
-                .map(name => `export type ${name} = TODO; // TODO: Replace this with your own data type`)
+                .map((name) => `export type ${name} = TODO; // TODO: Replace this with your own data type`)
                 .join('\n')}
         `;
         await writeCode(code, outputFile);
@@ -446,12 +446,12 @@ async function writeModelsScaffold(schema: GraphQLSchema, outputFile: string): P
 }
 
 async function writeInterfaceImpls(schema: GraphQLSchema, outputDir: string): Promise<boolean> {
-    const interfaces = namedTypesFromSchema(schema).filter(name => isUnionOrInterfaceType(name, schema));
+    const interfaces = namedTypesFromSchema(schema).filter((name) => isUnionOrInterfaceType(name, schema));
 
     if (interfaces.length < 1) return true;
 
     const files = await Promise.all(
-        interfaces.map(async name => {
+        interfaces.map(async (name) => {
             const basename = `${name}.js`;
             const filename = path.resolve(outputDir, basename);
             await writeInterfaceImpl(schema, name, filename);
@@ -467,12 +467,12 @@ function getConcreteSubtypes(schema: GraphQLSchema, name: string): Array<string>
     const concretes =
         type instanceof GraphQLUnionType
             ? // For unions, we can directly query its "subtypes"
-              type.getTypes().map(t => t.name)
+              type.getTypes().map((t) => t.name)
             : // For interfaces, we cannot do it directly, but instead have to iterate all possible subtypes and check if they inherit from this interface
-              namedTypesFromSchema(schema).filter(typename => {
+              namedTypesFromSchema(schema).filter((typename) => {
                   const t = schema.getType(typename);
                   // Only keep object types that implement the current interface
-                  return t instanceof GraphQLObjectType && getInterfaces(t).some(iface => iface.name === name);
+                  return t instanceof GraphQLObjectType && getInterfaces(t).some((iface) => iface.name === name);
               });
     return concretes;
 }
@@ -502,7 +502,7 @@ async function writeInterfaceImpl(schema: GraphQLSchema, name: string, outputFil
     mod.emit(`
         export function dispatch(value: ${name}): ${name}$typename {
             // TODO: Implement how to distinguish which concrete type "value" is
-            ${concretes.map(c => `if (TODO) { return ${JSON.stringify(c)}; }`).join('\n else \n')}
+            ${concretes.map((c) => `if (TODO) { return ${JSON.stringify(c)}; }`).join('\n else \n')}
             throw new Error('Unknown concrete type for ${
                 type instanceof GraphQLUnionType ? 'union' : 'abstract interface'
             } type ${name}.');
@@ -518,12 +518,12 @@ async function writeInterfaceImpl(schema: GraphQLSchema, name: string, outputFil
  */
 async function writeScalarsIndex(schema: GraphQLSchema, outputFile: string): Promise<string> {
     const modelNames = namedTypesFromSchema(schema)
-        .filter(name => schema.getType(name) instanceof GraphQLScalarType)
-        .filter(name => !BUILTINS.has(name));
+        .filter((name) => schema.getType(name) instanceof GraphQLScalarType)
+        .filter((name) => !BUILTINS.has(name));
 
     if (modelNames.length > 0) {
         const mod = new ModuleBuilder(HEADER_COMMENT);
-        mod.emit(modelNames.map(name => `export type { ${name} } from './${name}';`).join('\n'));
+        mod.emit(modelNames.map((name) => `export type { ${name} } from './${name}';`).join('\n'));
         const code = mod.toString();
         await writeCode(code, outputFile);
     }
@@ -533,7 +533,7 @@ async function writeScalarsIndex(schema: GraphQLSchema, outputFile: string): Pro
 
 async function writeScalarImpls(schema: GraphQLSchema, outputDir: string): Promise<void> {
     const scalarNames = namedTypesFromSchema(schema).filter(
-        model => schema.getType(model) instanceof GraphQLScalarType
+        (model) => schema.getType(model) instanceof GraphQLScalarType
     );
 
     if (scalarNames.length < 1) return;
@@ -543,7 +543,7 @@ async function writeScalarImpls(schema: GraphQLSchema, outputDir: string): Promi
         writeScalarsIndex(schema, path.resolve(outputDir, 'index.js')),
 
         // And all the scalars
-        ...scalarNames.map(async name => {
+        ...scalarNames.map(async (name) => {
             const basename = `${name}.js`;
             const filename = path.resolve(outputDir, basename);
             await writeScalarImpl(schema, name, filename);
@@ -631,14 +631,16 @@ async function writeContextScaffold(schema: GraphQLSchema, outputFile: string): 
  * Writes Resolver implementation scaffolds.
  */
 async function writeResolverImpls(schema: GraphQLSchema, outputDir: string): Promise<boolean> {
-    const modelNames = namedTypesFromSchema(schema).filter(model => schema.getType(model) instanceof GraphQLObjectType);
+    const modelNames = namedTypesFromSchema(schema).filter(
+        (model) => schema.getType(model) instanceof GraphQLObjectType
+    );
 
     const $files = [
         // The index.js file
         writeRootResolverImpl(schema, path.resolve(outputDir, 'index.js')),
 
         // The resolver files
-        ...modelNames.map(async name => {
+        ...modelNames.map(async (name) => {
             const basename = `${name}Resolver.js`;
             const outputPath = path.resolve(outputDir, basename);
             await writeResolverImpl(schema, name, outputPath);
@@ -658,12 +660,12 @@ async function writeRootResolverImpl(schema: GraphQLSchema, outputFile: string):
 
     const mod = new ModuleBuilder(HEADER_COMMENT);
     mod.emit(() => {
-        const resolverNames = modelNames.filter(model => schema.getType(model) instanceof GraphQLObjectType);
-        const scalarNames = modelNames.filter(model => schema.getType(model) instanceof GraphQLScalarType);
-        const interfaceNames = modelNames.filter(name => isUnionOrInterfaceType(name, schema));
+        const resolverNames = modelNames.filter((model) => schema.getType(model) instanceof GraphQLObjectType);
+        const scalarNames = modelNames.filter((model) => schema.getType(model) instanceof GraphQLScalarType);
+        const interfaceNames = modelNames.filter((name) => isUnionOrInterfaceType(name, schema));
 
         const scalarDecls = scalarNames
-            .map(name => {
+            .map((name) => {
                 const type = schema.getType(name);
                 const descr = type ? type.description || '' : '';
                 mod.addNamedImport('makeScalar', 'lib/graphql-tools');
@@ -672,12 +674,12 @@ async function writeRootResolverImpl(schema: GraphQLSchema, outputFile: string):
             })
             .join('\n');
         const interfaceDecls = interfaceNames
-            .map(name => {
+            .map((name) => {
                 mod.addNamespaceImport(name, `../interfaces/${name}`);
                 return `${name}: { __resolveType: ${name}.dispatch },`;
             })
             .join('\n');
-        const resolverDecls = resolverNames.map(name => `${name},`).join('\n');
+        const resolverDecls = resolverNames.map((name) => `${name},`).join('\n');
 
         for (const name of resolverNames) {
             mod.addDefaultImport(name, `./${name}Resolver`);
@@ -721,7 +723,7 @@ async function runWithOptions(options: ProgramOptions) {
 
     // If some of these generators returns an explicit falsey value, fail the
     // entire generator with a non-zero exit code
-    if (!results.every(rv => rv === undefined || rv)) {
+    if (!results.every((rv) => rv === undefined || rv)) {
         process.exit(1);
     }
 }
@@ -744,7 +746,7 @@ async function run(): Promise<void> {
     }
 }
 
-run().catch(e => {
+run().catch((e) => {
     console.error(e);
     process.exit(1);
 });

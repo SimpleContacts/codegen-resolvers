@@ -12,7 +12,7 @@ import prettier from 'prettier';
 
 const readFile = util.promisify(fs.readFile);
 const writeFile = util.promisify(fs.writeFile);
-const readdir: string => Promise<Array<string>> = util.promisify(fs.readdir);
+const readdir: (string) => Promise<Array<string>> = util.promisify(fs.readdir);
 const projRoot = path.resolve(__dirname, '../../..');
 const relative = (f: string): string => path.relative('.', f);
 
@@ -59,15 +59,15 @@ export async function write(filename: string, contents: string): Promise<void> {
  */
 export async function checkOutputDir(dir: string, pattern: RegExp, expectedFiles: Array<string>): Promise<boolean> {
     // Work with full paths only
-    const expected = new Set(expectedFiles.map(f => path.resolve(dir, f)));
+    const expected = new Set(expectedFiles.map((f) => path.resolve(dir, f)));
 
     const unexpected: Array<string> = sortBy(
         (await readdir(dir))
-            .map(f => path.resolve(dir, f)) // Work with full paths only
-            .filter(f => f.match(pattern))
+            .map((f) => path.resolve(dir, f)) // Work with full paths only
+            .filter((f) => f.match(pattern))
 
             // Filter out expected files
-            .filter(f => !expected.has(f))
+            .filter((f) => !expected.has(f))
     );
 
     if (unexpected.length > 0) {

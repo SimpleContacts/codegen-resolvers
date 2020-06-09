@@ -72,7 +72,7 @@ export default class ModuleBuilder {
      * difference is that it's emitted in a different "section" in the output.
      * (Type defs go first, then all code defs.)
      */
-    registerDef(key: string, callback: ModuleBuilder => string) {
+    registerDef(key: string, callback: (ModuleBuilder) => string) {
         if (this._defs.has(key)) {
             throw new Error(`Def "${key}" already registered. You can only register a definition once.`);
         }
@@ -89,7 +89,7 @@ export default class ModuleBuilder {
      * is that it's emitted in a different "section" in the output. (Type defs go
      * first, then all code defs.)
      */
-    registerTypeDef(key: string, callback: ModuleBuilder => string) {
+    registerTypeDef(key: string, callback: (ModuleBuilder) => string) {
         if (this._typeDefs.has(key)) {
             throw new Error(`Type def "${key}" already registered. You can only register a type definition once.`);
         }
@@ -131,7 +131,7 @@ export default class ModuleBuilder {
      * Emits a definition directly.  This is like registering a def, and
      * immediately requiring it, without the need to use an explicit key.
      */
-    emit(codeOrCallback: string | (ModuleBuilder => string)) {
+    emit(codeOrCallback: string | ((ModuleBuilder) => string)) {
         const code: string = typeof codeOrCallback === 'string' ? codeOrCallback : codeOrCallback(this);
         this._defCode.push(code);
     }
@@ -207,7 +207,7 @@ export default class ModuleBuilder {
         }
 
         for (const [module, identifiers] of this._namedImports.entries()) {
-            const sorted = sortBy([...identifiers], [i => i.toLowerCase()]);
+            const sorted = sortBy([...identifiers], [(i) => i.toLowerCase()]);
             yield [
                 1,
                 // For named imports, our ESlint rule sorts the entire import line by
@@ -222,7 +222,7 @@ export default class ModuleBuilder {
         }
 
         for (const [module, identifiers] of this._typeImports.entries()) {
-            const sorted = sortBy([...identifiers], [i => i.toLowerCase()]);
+            const sorted = sortBy([...identifiers], [(i) => i.toLowerCase()]);
             yield [
                 3,
                 // For type imports, our ESlint rule sorts the entire import line by
@@ -242,8 +242,8 @@ export default class ModuleBuilder {
                 ([, m]) => m.toLowerCase(),
             ]
         ).map(([, , line]) => line);
-        const typeDefLines = this._typeDefCode.map(code => `${code}\n`);
-        const defLines = this._defCode.map(code => `${code}\n`);
+        const typeDefLines = this._typeDefCode.map((code) => `${code}\n`);
+        const defLines = this._defCode.map((code) => `${code}\n`);
         return [this._headerComment, '', ...importLines, '', ...typeDefLines, '', ...defLines].join('\n');
     }
 }
