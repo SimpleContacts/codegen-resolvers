@@ -71,7 +71,7 @@
     "@babel/runtime": "^7.10.2",
     "@babel/traverse": "^7.10.1",
     "commander": "^2.19.0",
-    "graphql": "^14.2.1",
+    "graphql": "^15.3.0",
     "invariant": "^2.2.4",
     "lodash": "^4.17.11",
     "mkdirp-promise": "^5.0.1",
