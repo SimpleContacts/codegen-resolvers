@@ -70,7 +70,7 @@
     "@babel/parser": "^7.10.2",
     "@babel/runtime": "^7.10.2",
     "@babel/traverse": "^7.10.1",
-    "commander": "^2.19.0",
+    "commander": "^7.0.0",
     "graphql": "^14.2.1",
     "invariant": "^2.2.4",
     "lodash": "^4.17.11",
